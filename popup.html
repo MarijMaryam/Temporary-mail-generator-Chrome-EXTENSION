@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporary Mail Generator</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#4285f4"/>
+                </svg>
+                <h1>Temp Mail</h1>
+            </div>
+            <div class="subtitle">by Marij Maryam</div>
+        </header>
+
+        <!-- Current Email Section -->
+        <section class="email-section">
+            <div class="email-container" id="emailContainer">
+                <div class="no-email" id="noEmail">
+                    <div class="icon">📧</div>
+                    <p>No temporary email generated yet</p>
+                    <small>Click "Generate New Email" to get started</small>
+                </div>
+                
+                <div class="current-email" id="currentEmail" style="display: none;">
+                    <div class="email-header">
+                        <span class="label">Current Email:</span>
+                        <div class="email-actions">
+                            <button class="btn-icon" id="copyBtn" title="Copy to clipboard">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button class="btn-icon" id="refreshBtn" title="Refresh inbox">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="email-address" id="emailAddress"></div>
+                    <div class="email-status">
+                        <span class="status-dot active"></span>
+                        <span class="status-text">Active</span>
+                        <span class="message-count" id="messageCount">0 messages</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <section class="actions">
+            <button class="btn btn-primary" id="generateBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor"/>
+                </svg>
+                Generate New Email
+            </button>
+            
+            <button class="btn btn-secondary" id="clearBtn" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+                </svg>
+                Clear Email
+            </button>
+        </section>
+
+        <!-- Inbox Section -->
+        <section class="inbox-section" id="inboxSection" style="display: none;">
+            <div class="inbox-header">
+                <h3>Inbox</h3>
+                <button class="btn-text" id="refreshInboxBtn">Refresh</button>
+            </div>
+            
+            <div class="inbox-content" id="inboxContent">
+                <div class="loading" id="inboxLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>Loading messages...</span>
+                </div>
+                
+                <div class="no-messages" id="noMessages">
+                    <div class="icon">📫</div>
+                    <p>No messages yet</p>
+                    <small>Messages will appear here when received</small>
+                </div>
+                
+                <div class="messages-list" id="messagesList"></div>
+            </div>
+        </section>
+
+        <!-- Message Modal -->
+        <div class="modal" id="messageModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalSubject">Message</h3>
+                    <button class="btn-icon" id="closeModal">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="message-meta">
+                        <div class="sender" id="modalSender"></div>
+                        <div class="date" id="modalDate"></div>
+                    </div>
+                    <div class="message-content" id="modalContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-text">
+                <small>Free temporary emails • No registration required</small>
+            </div>
+        </footer>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="spinner"></div>
+            <span>Generating email...</span>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast" id="toast" style="display: none;">
+            <div class="toast-content">
+                <span id="toastMessage"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
